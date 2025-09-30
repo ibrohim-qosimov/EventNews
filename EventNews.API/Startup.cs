@@ -97,7 +97,10 @@ namespace EventNews.API
             app.UseHttpsRedirection();
 
             app.UseRouting();
-            
+
+            app.UseCors(ops => {
+                ops.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
+            });
             app.UseAuthentication();
 
             app.UseAuthorization();
