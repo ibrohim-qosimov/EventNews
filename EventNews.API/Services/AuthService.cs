@@ -11,7 +11,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace EventNews.API.Services
@@ -23,7 +22,13 @@ namespace EventNews.API.Services
         private readonly IEmailSender _emailSender;
         private readonly IMemoryCache _memoryCache;
         private readonly IConfiguration _configuration;
-        public AuthService(IUserRepository userRepository, IPasswordHasher passwordHasher, IEmailSender emailSender, IMemoryCache memoryCache, IConfiguration configuration)
+
+        public AuthService(
+            IUserRepository userRepository,
+            IPasswordHasher passwordHasher,
+            IEmailSender emailSender,
+            IMemoryCache memoryCache,
+            IConfiguration configuration)
         {
             _userRepository = userRepository;
             _passwordHasher = passwordHasher;
@@ -32,6 +37,7 @@ namespace EventNews.API.Services
             _configuration = configuration;
         }
 
+        // ================= Register =================
         public async Task<BaseResponse> Register(RegisterDTO dto)
         {
             var isEmailExist = await _userRepository.GetUsers(x => x.Email == dto.Email);
@@ -64,6 +70,7 @@ namespace EventNews.API.Services
             };
         }
 
+        // ================= Login (generate & send OTP) =================
         public async Task<BaseResponse> Login(LoginDTO dto)
         {
             var isEmailExist = await _userRepository.GetUsers(x => x.Email == dto.Email);
@@ -81,7 +88,7 @@ namespace EventNews.API.Services
 
             var isPasswordMatch = _passwordHasher.Verify(user.Password, dto.Password, user.Salt);
 
-            if (isPasswordMatch == false)
+            if (!isPasswordMatch)
             {
                 return new BaseResponse()
                 {
@@ -90,40 +97,52 @@ namespace EventNews.API.Services
                 };
             }
 
+            // OTP generate
             var random = new Random();
-
             var otpMessage = random.Next(100000, 999999);
+
+            // Email yuborish
             var isOtpSent = await _emailSender.SendMessageAsync(user.Email, otpMessage);
 
-            if (isOtpSent.IsSuccess == false)
+            if (!isOtpSent.IsSuccess)
             {
-
-                _memoryCache.Set(user.Email, otpMessage, DateTimeOffset.FromUnixTimeSeconds(120));
-
                 return new BaseResponse()
                 {
                     IsSuccess = false,
-                    Error = "Failes while sending one time password"
+                    Error = "Failed while sending one time password"
                 };
             }
+
+            if (_memoryCache.Get(user.Email)?.ToString() is not null)
+                _memoryCache.Remove(user.Email);
+
+            _memoryCache.Set(user.Email, otpMessage, TimeSpan.FromMinutes(2));
 
             return new BaseResponse() { IsSuccess = true };
         }
 
-        public async Task<TokenResponse> VerifyOtp(string email, int otp)
+        // ================= Verify OTP =================
+        public async Task<TokenResponse?> VerifyOtp(string email, int otp)
         {
             var exist = await _userRepository.GetUsers(x => x.Email == email);
+
+
             if (!exist.Any())
-                throw new NotImplementedException();
-
-            var user  = exist.FirstOrDefault();
-            var otpMessage = _memoryCache.Get(email).ToString();
-
-            if (otpMessage != otp.ToString())
             {
-                return null;
+                return null; // user not found
             }
 
+            var user = exist.First();
+
+            // Cache’dan OTP olish
+            var otpMessage = _memoryCache.Get(email)?.ToString();
+
+            if (otpMessage == null || otpMessage != otp.ToString())
+            {
+                return null; // OTP noto‘g‘ri yoki muddati o‘tgan
+            }
+
+            // Token generate qilish
             string token = await GenerateJWT(user);
 
             return new TokenResponse()
@@ -132,26 +151,31 @@ namespace EventNews.API.Services
             };
         }
 
+        // ================= JWT Generator =================
         private async Task<string> GenerateJWT(User user)
         {
             if (user == null)
                 return "null";
 
-            SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWTSettings:Key"]!));
-            SigningCredentials credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+            SymmetricSecurityKey securityKey =
+                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWTSettings:Key"]!));
+
+            SigningCredentials credentials =
+                new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
             int expirePeriod = int.Parse(_configuration["JWTSettings:Expire"]!);
 
             var role = (int)user.Role;
             List<Claim> claims = new List<Claim>()
             {
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Iat, EpochTime.GetIntDate(DateTime.UtcNow).ToString(CultureInfo.InvariantCulture), ClaimValueTypes.Integer64),
+                new Claim(JwtRegisteredClaimNames.Iat,
+                    EpochTime.GetIntDate(DateTime.UtcNow).ToString(CultureInfo.InvariantCulture),
+                    ClaimValueTypes.Integer64),
                 new Claim("email", user.Email),
                 new Claim("Role", role.ToString()),
                 new Claim("UserId", user.Id.ToString()),
             };
-
-
 
             JwtSecurityToken token = new JwtSecurityToken(
                 issuer: _configuration["JWTSettings:Issuer"],
@@ -159,9 +183,7 @@ namespace EventNews.API.Services
                 expires: DateTime.UtcNow.AddMinutes(expirePeriod),
                 signingCredentials: credentials);
 
-            var responseToken = new JwtSecurityTokenHandler().WriteToken(token);
-
-            return responseToken;
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }
