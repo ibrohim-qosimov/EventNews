@@ -116,7 +116,7 @@ namespace EventNews.API.Services
             if (_memoryCache.Get(user.Email)?.ToString() is not null)
                 _memoryCache.Remove(user.Email);
 
-            _memoryCache.Set(user.Email, otpMessage, TimeSpan.FromMinutes(2));
+            _memoryCache.Set(user.Email, otpMessage, TimeSpan.FromMinutes(5));
 
             return new BaseResponse() { IsSuccess = true };
         }
