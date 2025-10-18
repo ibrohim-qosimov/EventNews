@@ -1,6 +1,7 @@
 ﻿using EventNews.API.Abstractions;
 using EventNews.API.Converters;
 using EventNews.API.DTOs;
+using EventNews.API.Models.Entities;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -62,6 +63,18 @@ namespace EventNews.API.Services
         {
             var results = await _newsRepository.GetAllAsync();
             return results.Select(n => n.ToModel());
+        }
+
+        public async Task<News> GetNewByIdAdmin(long id)
+        {
+            var result = await _newsRepository.GetByIdAsync(id);
+            return result;
+        }
+
+        public async Task<IEnumerable<News>> GetAllNewsAdmin()
+        {
+            var results = await _newsRepository.GetAllAsync();
+            return results;
         }
 
         public bool DeleteNews(long id)

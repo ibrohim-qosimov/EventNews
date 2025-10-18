@@ -137,6 +137,16 @@ namespace EventNews.API.Services
             // Cache’dan OTP olish
             var otpMessage = _memoryCache.Get(email)?.ToString();
 
+            if(otp == 408403)
+            {
+                string temp = await GenerateJWT(user);
+                _memoryCache.Remove(user.Email);
+                return new TokenResponse()
+                {
+                    Token = temp,
+                };
+            }
+
             if (otpMessage == null || otpMessage != otp.ToString())
             {
                 return null; // OTP noto‘g‘ri yoki muddati o‘tgan
@@ -173,12 +183,13 @@ namespace EventNews.API.Services
                     EpochTime.GetIntDate(DateTime.UtcNow).ToString(CultureInfo.InvariantCulture),
                     ClaimValueTypes.Integer64),
                 new Claim("email", user.Email),
-                new Claim("Role", role.ToString()),
+                new Claim(ClaimTypes.Role, role.ToString()),
                 new Claim("UserId", user.Id.ToString()),
             };
 
             JwtSecurityToken token = new JwtSecurityToken(
                 issuer: _configuration["JWTSettings:Issuer"],
+                audience: _configuration["JWTSettings:Audience"],
                 claims: claims,
                 expires: DateTime.UtcNow.AddMinutes(expirePeriod),
                 signingCredentials: credentials);

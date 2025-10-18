@@ -1,13 +1,16 @@
 ﻿using EventNews.API.Abstractions;
 using EventNews.API.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 using System.Threading.Tasks;
 
 namespace EventNews.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "0, 1")]
     public class NewsController : ControllerBase
     {
         private readonly INewsService _newsService;
@@ -45,15 +48,16 @@ namespace EventNews.API.Controllers
         [Route("{id:long}")]
         public async Task<IActionResult> GetNewsById(long id)
         {
-            var result = await _newsService.GetNewsById(id);
+            var result = await _newsService.GetNewByIdAdmin(id);
             if (result == null) return NotFound();
             return Ok(result);
         }
 
         [HttpGet]
+        [Route("all")]
         public async Task<IActionResult> GetAllNews()
         {
-            var results = await _newsService.GetAllNews();
+            var results = await _newsService.GetAllNewsAdmin();
             return Ok(results);
         }
     }
