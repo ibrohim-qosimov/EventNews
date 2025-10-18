@@ -144,7 +144,7 @@ namespace EventNews.API.Services
 
             // Token generate qilish
             string token = await GenerateJWT(user);
-
+            _memoryCache.Remove(user.Email);
             return new TokenResponse()
             {
                 Token = token,
