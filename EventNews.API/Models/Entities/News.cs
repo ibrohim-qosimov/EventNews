@@ -7,7 +7,6 @@ namespace EventNews.API.Models.Entities
     public class News : ILocalizedTitles, ILanguageContents, ILanguageShortContent
     {
         public long Id { get; set; }
-        public string ImageUrl { get; set; }
 
         public string TitleUz { get; set; }
         public string TitleRu { get; set; }

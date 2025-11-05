@@ -12,13 +12,10 @@ namespace EventNews.API.Converters
             Title = entity.GetContentByLanguage("uz"),
             Content = entity.GetContentByLanguage("uz"),
             ShortContent = entity.GetShortContentByLanguage("uz"),
-            ImageUrl = entity.ImageUrl
         };
 
         public static News ToEntity(this CreateNews dto) => new News
         {
-            ImageUrl = dto.ImageUrl,
-
             TitleUz = dto.TitleUz,
             ShortContentUz = dto.ShortContentUz,
             ContentUz = dto.ContentUz,

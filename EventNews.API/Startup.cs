@@ -108,6 +108,9 @@ namespace EventNews.API
 
             services.AddScoped<IFileService, FileService>();
 
+            services.AddHttpContextAccessor();
+
+
             // ? DB
             services.AddDbContext<IApplicationDbContext, ApplicationDbContext>(ops =>
             {

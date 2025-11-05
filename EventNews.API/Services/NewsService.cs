@@ -46,8 +46,6 @@ namespace EventNews.API.Services
             existingNews.ShortContentCrlyc = dto.ShortContentCrlyc;
             existingNews.ContentCrlyc = dto.ContentCrlyc;
 
-            existingNews.ImageUrl = dto.ImageUrl;
-
             var result = _newsRepository.Update(existingNews);
 
             return result.ToModel();

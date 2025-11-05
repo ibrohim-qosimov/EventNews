@@ -1,4 +1,7 @@
-﻿namespace EventNews.API.DTOs
+﻿using EventNews.API.Models.Entities;
+using System.Collections.Generic;
+
+namespace EventNews.API.DTOs
 {
     public class NewsModel
     {
@@ -6,6 +9,7 @@
         public string Title { get; set; }
         public string Content { get; set; }
         public string ShortContent { get; set; }
-        public string ImageUrl { get; set; }
+
+        public List<NewsImageModel> Images { get; set; }
     }
 }
