@@ -15,6 +15,7 @@ namespace EventNews.API.Context
 
         public DbSet<User> Users { get; set; }
         public DbSet<News> News { get; set; }
+        public DbSet<FileEntity> Files { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

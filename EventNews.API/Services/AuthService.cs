@@ -122,7 +122,7 @@ namespace EventNews.API.Services
         }
 
         // ================= Verify OTP =================
-        public async Task<TokenResponse?> VerifyOtp(string email, int otp)
+        public async Task<TokenResponse> VerifyOtp(string email, int otp)
         {
             var exist = await _userRepository.GetUsers(x => x.Email == email);
 

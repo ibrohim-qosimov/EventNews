@@ -30,7 +30,7 @@ namespace EventNews.API
         {
             services.AddControllers();
 
-            // ? Swagger + JWT Authorization qo‘shildi
+            // ? Swagger + JWT Authorization qoï¿½shildi
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
@@ -106,6 +106,8 @@ namespace EventNews.API
             services.AddScoped<IEmailSender, EmailSender>();
             services.AddMemoryCache();
 
+            services.AddScoped<IFileService, FileService>();
+
             // ? DB
             services.AddDbContext<IApplicationDbContext, ApplicationDbContext>(ops =>
             {
@@ -128,6 +130,8 @@ namespace EventNews.API
 
             app.UseHttpsRedirection();
             app.UseRouting();
+
+            app.UseStaticFiles();
 
             app.UseCors(ops =>
             {
