@@ -127,7 +127,7 @@ namespace EventNews.API
                 app.UseSwaggerUI(c =>
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "EventNews.API v1");
-                    //c.RoutePrefix = string.Empty; // Swagger asosiy sahifada ochiladi
+                    c.RoutePrefix = string.Empty; // Swagger asosiy sahifada ochiladi
                 });
             }
 

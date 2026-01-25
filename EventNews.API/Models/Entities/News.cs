@@ -1,6 +1,8 @@
 ﻿using EventNews.API.Models.Enums;
 using EventNews.API.Models.Languages;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace EventNews.API.Models.Entities
 {
@@ -25,5 +27,7 @@ namespace EventNews.API.Models.Entities
 
         public DateTimeOffset PublishedAt { get; set; } = DateTimeOffset.UtcNow;
         public EItemStates State { get; set; } = EItemStates.Active;
+
+        public virtual ICollection<NewsImage> Files { get; set; } = new List<NewsImage>();
     }
 }

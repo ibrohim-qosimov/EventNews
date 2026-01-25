@@ -12,8 +12,8 @@ namespace EventNews.API.Models.Entities
         public long NewsId { get; set; }
         public Guid FileId { get; set; }
         
-        public EImageType Type { get; set; } 
+        public EImageType Type { get; set; }
 
-        public bool IsVisible { get; set; }
+        public bool IsVisible { get; set; } = true;
     }
 }
