@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using EventNews.API.Abstractions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,11 +11,12 @@ namespace EventNews.API.Controllers
     {
         private readonly IFileService _fileService;
         private readonly IHttpContextAccessor _contextAccessor;
-
-        public FilesController(IFileService fileService, IHttpContextAccessor contextAccessor)
+        private readonly INewsImagesService _newsImagesService;
+        public FilesController(IFileService fileService, IHttpContextAccessor contextAccessor, INewsImagesService newsImagesService)
         {
             _fileService = fileService;
             _contextAccessor = contextAccessor;
+            _newsImagesService = newsImagesService;
         }
 
         [HttpPost("upload")]
@@ -32,6 +34,20 @@ namespace EventNews.API.Controllers
                 Url = fileUrl
             });
         }
+
+        [HttpPost("upload-multiple/{newsId}")]
+        public async Task<IActionResult> UploadMultipleFiles([FromForm] IFormFileCollection files, long newsId)
+        {
+            var result = await _newsImagesService.AddImagesToSingleNews(files, newsId);
+            
+            if (result)
+            {
+                return Ok(new { Message = "Files uploaded successfully." });
+            }
+            else
+            {
+                return StatusCode(500, new { Message = "An error occurred while uploading files." });
+            }
+        }
     }
-    
 }

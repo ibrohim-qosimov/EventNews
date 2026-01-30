@@ -1,6 +1,7 @@
 ﻿using EventNews.API.DTOs;
 using EventNews.API.Models.Entities;
 using EventNews.API.Models.Languages;
+using System.Linq;
 
 namespace EventNews.API.Converters
 {
@@ -12,6 +13,7 @@ namespace EventNews.API.Converters
             Title = entity.GetContentByLanguage("uz"),
             Content = entity.GetContentByLanguage("uz"),
             ShortContent = entity.GetShortContentByLanguage("uz"),
+            Images = entity.Files?.ToList()
         };
 
         public static News ToEntity(this CreateNews dto) => new News
