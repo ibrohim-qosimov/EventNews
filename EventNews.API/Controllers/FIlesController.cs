@@ -51,15 +51,15 @@ namespace EventNews.API.Controllers
             }
         }
 
-        [HttpGet("find/{fileId}")]
-        public async Task<IActionResult> GetFileById(Guid fileId)
-        {
-            var fileStream = await _fileService.(fileId);
-            if (fileStream == null)
-            {
-                return NotFound();
-            }
-            return File(fileStream, "application/octet-stream", $"{fileId}");
-        }
+        //[HttpGet("find/{fileId}")]
+        //public async Task<IActionResult> GetFileById(Guid fileId)
+        //{
+        //    var fileStream = await _fileService.(fileId);
+        //    if (fileStream == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    return File(fileStream, "application/octet-stream", $"{fileId}");
+        //}
     }
 }
