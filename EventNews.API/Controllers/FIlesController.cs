@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using EventNews.API.Abstractions;
 using Microsoft.AspNetCore.Http;
@@ -48,6 +49,17 @@ namespace EventNews.API.Controllers
             {
                 return StatusCode(500, new { Message = "An error occurred while uploading files." });
             }
+        }
+
+        [HttpGet("find/{fileId}")]
+        public async Task<IActionResult> GetFileById(Guid fileId)
+        {
+            var fileStream = await _fileService.(fileId);
+            if (fileStream == null)
+            {
+                return NotFound();
+            }
+            return File(fileStream, "application/octet-stream", $"{fileId}");
         }
     }
 }
