@@ -10,7 +10,7 @@ namespace EventNews.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "0, 1")]
+    [Authorize(Roles = "1")]
     public class NewsController : ControllerBase
     {
         private readonly INewsService _newsService;

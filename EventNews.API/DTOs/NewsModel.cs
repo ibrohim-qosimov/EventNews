@@ -10,6 +10,6 @@ namespace EventNews.API.DTOs
         public string Content { get; set; }
         public string ShortContent { get; set; }
 
-        public List<NewsImageModel> Images { get; set; }
+        public List<NewsImage> Images { get; set; } = new List<NewsImage>();
     }
 }

@@ -11,10 +11,11 @@ namespace EventNews.API.Services
     public class NewsService : INewsService
     {
         private readonly INewsRepository _newsRepository;
-
-        public NewsService(INewsRepository newsRepository)
+        private readonly INewsImagesService _newsImagesService;
+        public NewsService(INewsRepository newsRepository, INewsImagesService newsImagesService)
         {
             _newsRepository = newsRepository;
+            _newsImagesService = newsImagesService;
         }
 
         public async Task<NewsModel> AddNews(CreateNews dto)
@@ -54,30 +55,50 @@ namespace EventNews.API.Services
         public async Task<NewsModel> GetNewsById(long id)
         {
             var result = await _newsRepository.GetByIdAsync(id);
+
+            var images = await _newsImagesService.GetImagesByNewsId(id);
+            result.Files = images.ToList();
+
             return result?.ToModel();
         }
 
         public async Task<IEnumerable<NewsModel>> GetAllNews()
         {
             var results = await _newsRepository.GetAllAsync();
+
+            foreach(var news in results)
+            {
+                var images = await _newsImagesService.GetImagesByNewsId(news.Id);
+                news.Files = images.ToList();
+            }
+
             return results.Select(n => n.ToModel());
         }
 
         public async Task<News> GetNewByIdAdmin(long id)
         {
             var result = await _newsRepository.GetByIdAsync(id);
+
+            var images = await _newsImagesService.GetImagesByNewsId(id);
+            result.Files = images.ToList();
+            
             return result;
         }
 
         public async Task<IEnumerable<News>> GetAllNewsAdmin()
         {
             var results = await _newsRepository.GetAllAsync();
+
+            foreach (var news in results)
+            {
+                var images = await _newsImagesService.GetImagesByNewsId(news.Id);
+                news.Files = images.ToList();
+            }
+
             return results;
         }
 
         public bool DeleteNews(long id)
-        {
-            return _newsRepository.Delete(id);
-        }
+            => _newsRepository.Delete(id);
     }
 }

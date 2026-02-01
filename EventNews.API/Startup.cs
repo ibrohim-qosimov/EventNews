@@ -104,9 +104,13 @@ namespace EventNews.API
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IPasswordHasher, PasswordHasher>();
             services.AddScoped<IEmailSender, EmailSender>();
+            services.AddScoped<IFileService, FileService>();
+
+            services.AddScoped<INewsImagesRepository, NewsImagesRepository>();
+            services.AddScoped<INewsImagesService, NewsImagesService>();
+
             services.AddMemoryCache();
 
-            services.AddScoped<IFileService, FileService>();
 
             services.AddHttpContextAccessor();
 

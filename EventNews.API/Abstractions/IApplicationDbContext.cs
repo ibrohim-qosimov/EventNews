@@ -10,6 +10,7 @@ namespace EventNews.API.Abstractions
         DbSet<User> Users { get; set; }
         DbSet<News> News { get; set; }
         DbSet<FileEntity> Files { get; set; }
+        DbSet<NewsImage> NewsImages { get; set; }
         ValueTask<int> SaveChangesAsync(CancellationToken cancellationToken = default!);
         int SaveChanges();
     }
