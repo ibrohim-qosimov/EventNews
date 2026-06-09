@@ -30,5 +30,16 @@ namespace EventNews.API.Models.Languages
             "crlyc" => news.ShortContentCrlyc,
             _ => news.ShortContentUz
         };
+
+        public static string GetTitleByLanguage<T>(this T entity, string languageCode)
+      where T : ILocalizedTitles
+      => languageCode.ToLower() switch
+      {
+          "uz" => entity.TitleUz,
+          "ru" => entity.TitleRu,
+          "en" => entity.TitleEn,
+          "crlyc" => entity.TitleCrlyc,
+          _ => entity.TitleUz
+      };
     }
 }
