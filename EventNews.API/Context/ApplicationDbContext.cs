@@ -16,9 +16,12 @@ namespace EventNews.API.Context
         public DbSet<User> Users { get; set; }
         public DbSet<News> News { get; set; }
         public DbSet<FileEntity> Files { get; set; }
-
         public DbSet<NewsImage> NewsImages { get; set; }
+        public DbSet<Subscription> Subscriptions { get; set; }
+        public DbSet<ApplicationForm> ApplicationForms { get; set; }
+        public DbSet<Organization> Organizations { get; set; }
 
+        public DbSet<Region> Regions { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //modelBuilder.Entity<News>().HasQueryFilter(x=>x.State != Models.Enums.EItemStates.Deleted);

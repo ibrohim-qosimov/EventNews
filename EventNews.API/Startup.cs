@@ -109,6 +109,9 @@ namespace EventNews.API
 
             services.AddScoped<INewsImagesRepository, NewsImagesRepository>();
             services.AddScoped<INewsImagesService, NewsImagesService>();
+            
+            services.AddScoped<IRegionRepository, RegionRepository>();
+            services.AddScoped<IRegionService, RegionService>();
 
             services.AddMemoryCache();
 
