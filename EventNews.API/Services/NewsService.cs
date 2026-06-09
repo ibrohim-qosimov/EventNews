@@ -1,8 +1,11 @@
-﻿using EventNews.API.Abstractions;
+﻿using Castle.Core.Logging;
+using EventNews.API.Abstractions;
 using EventNews.API.Converters;
 using EventNews.API.DTOs;
 using EventNews.API.Models.Entities;
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -12,10 +15,12 @@ namespace EventNews.API.Services
     {
         private readonly INewsRepository _newsRepository;
         private readonly INewsImagesService _newsImagesService;
-        public NewsService(INewsRepository newsRepository, INewsImagesService newsImagesService)
+        private readonly ILogger<NewsService> _logger;
+        public NewsService(INewsRepository newsRepository, INewsImagesService newsImagesService, ILogger<NewsService> logger)
         {
             _newsRepository = newsRepository;
             _newsImagesService = newsImagesService;
+            _logger = logger;
         }
 
         public async Task<NewsModel> AddNews(CreateNews dto)
@@ -65,8 +70,11 @@ namespace EventNews.API.Services
         public async Task<IEnumerable<NewsModel>> GetAllNews()
         {
             var results = await _newsRepository.GetAllAsync();
+            _logger.LogInformation("Fetched {Count} news items from repository", results.Count());
 
-            foreach(var news in results)
+            _logger.LogWarning("a'll news items fetched, now fetching images for each news item");
+
+            foreach (var news in results)
             {
                 var images = await _newsImagesService.GetImagesByNewsId(news.Id);
                 news.Files = images.ToList();

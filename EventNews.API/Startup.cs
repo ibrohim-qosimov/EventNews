@@ -1,5 +1,6 @@
 using EventNews.API.Abstractions;
 using EventNews.API.Context;
+using EventNews.API.Middleware;
 using EventNews.API.Repositories;
 using EventNews.API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -124,6 +125,8 @@ namespace EventNews.API
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
